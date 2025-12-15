@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>LIVE DO TONHÃO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root{
+  --roxo:#7c3aed;
+  --roxo2:#a855f7;
+  --verde:#22c55e;
+  --verde2:#4ade80;
+  --preto:#050008;
+}
+
+/* ===== GLOBAL ===== */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',Arial,sans-serif;}
+body{margin:0;overflow-x:hidden;background:radial-gradient(circle at top,#1b0030,var(--preto));color:#fff;}
+button, select, input{font-family:'Segoe UI',Arial,sans-serif;}
+
+/* ===== CANVAS ===== */
+canvas{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;}
+
+/* ===== BARRA TOPO ===== */
+#top-bar{position:fixed;top:0;left:0;width:100%;display:flex;justify-content:flex-end;padding:15px 25px;z-index:9999;background:rgba(0,0,0,0.3);}
+#top-bar button{
+  margin-left:15px;padding:10px 25px;border:none;border-radius:25px;
+  background:linear-gradient(135deg,var(--roxo),var(--roxo2));color:#fff;font-weight:bold;
+  cursor:pointer;transition:.3s;text-shadow:0 0 10px #000;
+  box-shadow:0 5px 15px rgba(0,0,0,0.5);
+}
+#top-bar button:hover{transform:scale(1.05);box-shadow:0 10px 25px rgba(0,0,0,0.7);}
+
+/* ===== BEM VINDO ===== */
+#welcome{position:fixed;inset:0;background:radial-gradient(circle,#2a0050,#000);display:flex;align-items:center;justify-content:center;z-index:9998;}
+#welcome .box{text-align:center;display:flex;flex-direction:column;align-items:center;gap:15px;}
+#welcome h1{font-size:3.5em;color:var(--roxo2);text-shadow:0 0 30px var(--roxo2);}
+#welcome button{
+  padding:18px 60px;border:none;border-radius:999px;
+  background:linear-gradient(135deg,var(--roxo),var(--roxo2));
+  font-weight:bold;cursor:pointer;width:220px;
+  transition:.3s;box-shadow:0 10px 20px rgba(0,0,0,0.6);text-shadow:0 0 10px #000;
+}
+#welcome button:hover{transform:scale(1.05);box-shadow:0 0 40px rgba(168,85,247,0.7);}
+
+/* ===== SEÇÕES ===== */
+section{padding:120px 25px; display:none;}
+section h2{text-align:center;font-size:2.8em;margin-bottom:15px;color:var(--roxo2);text-shadow:0 0 20px #000;}
+section p{text-align:center;color:#ccc;margin-bottom:50px;}
+
+/* ===== CARDS ===== */
+.cards{display:flex;justify-content:center;flex-wrap:wrap;gap:40px;}
+.card{
+  width:300px;background:rgba(0,0,0,.6);border-radius:35px;padding:35px;text-align:center;
+  box-shadow:0 0 40px rgba(168,85,247,0.6);transition:.5s;position:relative;overflow:hidden;
+}
+.card:hover{transform:translateY(-10px) scale(1.05);box-shadow:0 0 60px rgba(168,85,247,0.8);}
+.card h3{text-decoration:underline;text-shadow:0 0 10px rgba(255,255,255,0.8);}
+
+/* ===== BOTÕES ===== */
+.btn{
+  width:100%;padding:15px;border:none;border-radius:999px;
+  background:linear-gradient(135deg,var(--roxo),var(--roxo2));
+  font-weight:bold;cursor:pointer;transition:.3s;text-shadow:0 0 10px #000;
+  box-shadow:0 5px 15px rgba(0,0,0,0.6);
+}
+.btn:hover{transform:scale(1.05);box-shadow:0 0 40px rgba(168,85,247,0.8);}
+
+/* ===== TDJ ===== */
+#tdj{
+  display:none;position:fixed;inset:0;background:linear-gradient(to bottom,#022c1a,#034d28);
+  z-index:10000;overflow:auto;padding:50px;
+}
+#tdj h2{color:var(--verde2);text-shadow:0 0 20px #000;}
+#tdj p,#facInfo{color:#d1fae5;margin-bottom:20px;}
+#tdj .cards .card{
+  box-shadow:0 0 30px rgba(34,197,94,0.7);
+  background:rgba(0,0,0,0.5);
+}
+#tdj .cards .card button{
+  background:linear-gradient(135deg,var(--verde),var(--verde2));
+  color:#fff;font-weight:bold;box-shadow:0 5px 15px rgba(0,0,0,0.6);text-shadow:0 0 10px #000;
+}
+#tdj .cards .card button:hover{
+  transform:scale(1.05);box-shadow:0 0 30px rgba(34,197,94,0.8);
+}
+#tdj #voltar{
+  background:linear-gradient(135deg,var(--verde2),var(--verde));
+  margin-bottom:30px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.6);text-shadow:0 0 10px #000;
+}
+
+/* ===== MODAL PIX ===== */
+#pixModal{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);
+  display:flex;align-items:center;justify-content:center;z-index:99999;animation:fadeIn 0.5s;
+}
+#pixModal .box{
+  background:#12001f;padding:45px;border-radius:35px;text-align:center;max-width:420px;width:90%;animation:scaleIn 0.5s;
+}
+#pixModal img{width:220px;height:220px;border-radius:22px;}
+
+/* ===== ANIMAÇÕES ===== */
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+.card{animation:slideUp 0.8s ease forwards;opacity:0;}
+
+/* ===== FOOTER ===== */
+footer{text-align:center;padding:40px;color:#aaa}
+footer strong{color:var(--roxo2);}
+
+/* ===== RESPONSIVO ===== */
+@media(max-width:768px){
+  .cards{gap:20px;flex-direction:column;align-items:center;}
+  .card{width:90%;}
+  #welcome h1{font-size:2.5em;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<canvas id="particlesTDJ"></canvas>
+
+<audio src="https://files.catbox.moe/8h9r3g.mp3" autoplay loop></audio>
+
+<!-- BARRA TOPO -->
+<div id="top-bar">
+  <button onclick="abrirTDJ()">TDJ</button>
+</div>
+
+<!-- BEM VINDO -->
+<div id="welcome">
+  <div class="box">
+    <h1>LIVE DO TONHÃO</h1>
+    <button onclick="entrar()">Ver Produtos</button>
+    <button onclick="irDiscord()">Ir para o Discord</button>
+    <button onclick="irTikTok()">Ir para o TikTok</button>
+  </div>
+</div>
+
+<!-- VIPS -->
+<section id="vips">
+<h2>💎 VIPs</h2>
+<p>Apoie a live e ganhe benefícios exclusivos</p>
+<div class="cards">
+  <div class="card"><h3>VIP Bronze 🥉</h3><div class="price">R$5</div><button class="btn" onclick="abrirPix()">Comprar</button></div>
+  <div class="card"><h3>VIP Prata 🥈</h3><div class="price">R$15</div><button class="btn" onclick="abrirPix()">Comprar</button></div>
+  <div class="card"><h3>VIP Ouro 🥇</h3><div class="price">R$30</div><button class="btn" onclick="abrirPix()">Comprar</button></div>
+</div>
+</section>
+
+<!-- DOAÇÕES -->
+<section id="doacao">
+<h2>💜 Doações</h2>
+<p>Qualquer valor ajuda a manter as lives</p>
+<div class="cards">
+  <div class="card">
+    <input type="number" id="valorDoacao" placeholder="Valor da doação" style="width:100%;padding:15px;border-radius:20px;border:none"><br><br>
+    <button class="btn" onclick="abrirPix()">Doar</button>
+  </div>
+</div>
+</section>
+
+<!-- PIX MODAL -->
+<div id="pixModal">
+  <div class="box">
+    <p>Pix: <strong>12988873459</strong></p>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=12988873459">
+    <br><br>
+    <button class="btn" onclick="fecharPix()">Fechar</button>
+  </div>
+</div>
+
+<!-- FEEDBACK -->
+<section id="feedback">
+<h2>⭐ Feedback</h2>
+<p>Diga se valeu a pena apoiar</p>
+<div class="cards">
+  <div class="card">
+    <input id="nome" placeholder="Seu nome" style="width:100%;padding:14px;border-radius:18px;border:none"><br><br>
+    <select id="nota" style="width:100%;padding:14px;border-radius:18px">
+      <option>⭐⭐⭐⭐⭐</option>
+      <option>⭐⭐⭐⭐</option>
+      <option>⭐⭐⭐</option>
+    </select><br><br>
+    <button class="btn" onclick="enviarFeedback()">Enviar</button>
+    <div id="listaFeedback" style="margin-top:15px;"></div>
+  </div>
+</div>
+</section>
+
+<!-- TDJ -->
+<section id="tdj">
+<button id="voltar" class="btn" onclick="fecharTDJ()">Voltar</button>
+<h2>🇯🇲 TDJ = TROPA DA JAMAICA</h2>
+<p>🔥 RECRUTAMENTO ABERTO! 🔥</p>
+<div class="cards">
+  <div class="card"><button class="btn" onclick="mostrarInfo('beneficios')">Benefícios</button></div>
+  <div class="card"><button class="btn" onclick="window.open('https://discord.gg/hv5Mh4aw','_blank')">Discord</button></div>
+  <div class="card"><button class="btn" onclick="mostrarInfo('entrar')">Como Entrar</button></div>
+</div>
+<div id="facInfo" style="margin-top:20px;"></div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+<p>© Todos os direitos reservados</p>
+<p><strong>Site criado por DAGG</strong></p>
+</footer>
+
+<script>
+// FUNÇÕES
+function entrar(){
+  document.getElementById('welcome').style.display='none';
+  document.getElementById('vips').style.display='block';
+  document.getElementById('doacao').style.display='block';
+  document.getElementById('feedback').style.display='block';
+}
+function irDiscord(){window.open('https://discord.gg/B8C5Pj44S','_blank');}
+function irTikTok(){window.open('https://www.tiktok.com/@tiktokrbx67','_blank');}
+function abrirTDJ(){document.getElementById('tdj').style.display='block';}
+function fecharTDJ(){document.getElementById('tdj').style.display='none';}
+
+// PIX/QR
+function abrirPix(){document.getElementById('pixModal').style.display='flex';}
+function fecharPix(){document.getElementById('pixModal').style.display='none';}
+
+// FEEDBACK
+let arrFeedback = [];
+function enviarFeedback(){
+  const nome = document.getElementById('nome').value.trim();
+  const nota = document.getElementById('nota').value;
+  if(nome && nota){
+    arrFeedback.unshift({n:nome,s:nota});
+    document.getElementById('listaFeedback').innerHTML=arrFeedback.map(f=>`<p><strong>${f.n}</strong> ${f.s}</p>`).join('');
+    document.getElementById('nome').value='';
+  }
+}
+
+// PARTICULAS ROXAS
+const canvas=document.getElementById('particles');
+const ctx=canvas.getContext('2d');
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight;}
+resize(); window.onresize=resize;
+let particles=[];
+for(let i=0;i<200;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1+0.5,speed:Math.random()*0.2+0.3,color:`rgba(168,85,247,${Math.random()*0.5+0.3})`});}
+function animate(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{p.y+=p.speed;if(p.y>canvas.height)p.y=0;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();});requestAnimationFrame(animate);}
+animate();
+
+// PARTICULAS VERDES TDJ
+const canvasTDJ=document.getElementById('particlesTDJ');
+const ctxTDJ=canvasTDJ.getContext('2d');
+function resizeTDJ(){canvasTDJ.width=window.innerWidth;canvasTDJ.height=window.innerHeight;}
+resizeTDJ(); window.onresize=resizeTDJ;
+let particlesTDJ=[];
+for(let i=0;i<250;i++){particlesTDJ.push({x:Math.random()*canvasTDJ.width,y:Math.random()*canvasTDJ.height,r:Math.random()*1+0.5,speed:Math.random()*0.2+0.3,color:`rgba(34,197,94,${Math.random()*0.5+0.3})`});}
+function animateTDJ(){ctxTDJ.clearRect(0,0,canvasTDJ.width,canvasTDJ.height);particlesTDJ.forEach(p=>{p.y+=p.speed;if(p.y>canvasTDJ.height)p.y=0;ctxTDJ.fillStyle=p.color;ctxTDJ.beginPath();ctxTDJ.arc(p.x,p.y,p.r,0,Math.PI*2);ctxTDJ.fill();});requestAnimationFrame(animateTDJ);}
+animateTDJ();
+
+// TDJ INFO
+const facInfo=document.getElementById('facInfo');
+function mostrarInfo(tipo){
+  if(tipo==='beneficios'){facInfo.innerHTML=`<pre style="white-space:pre-wrap;font-family:inherit;font-size:16px;">🌴 VANTAGENS DA FACÇÃO TDJ:
+- Facção sempre ativa, zero enrolação
+- Produção própria de armas e itens
+- Sistema de lavagem rápido e eficiente
+- Uniforme exclusivo no estilo jamaicano
+- Pinturas especiais e personalizadas para veículos
+- Ações constantes e bem organizadas
+- Chance de ganhar cargos por mérito
+- Gestão séria, organizada e transparente
+- Aqui você é acolhido de verdade — Família Jamaica!</pre>`;}
+  else if(tipo==='entrar'){facInfo.innerHTML=`<pre style="white-space:pre-wrap;font-family:inherit;font-size:16px;">📌 COMO ENTRAR NA TDJ:
+1️⃣ Entre no Discord da facção clicando no botão "Discord"
+2️⃣ Abra um ticket seguindo as instruções da facção
+3️⃣ Aguarde a aprovação da staff
+4️⃣ Após aprovação, você será adicionado à família TDJ</pre>`;}
+}
+</script>
+</body>
+</html>
